@@ -2,20 +2,51 @@
 #Henrik Klasen & Albane Keraudren-Riguidel
 
 from tkinter import *
+from llamaapi import LlamaAPI
+import openai
+import json
+from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
+
+#initializing Llama API
+# llama_api_token = getenv("LLAMA_API_TOKEN")
+# llama = LlamaAPI(llama_api_token)
+
 
 def sendText():
-    send = "You => " + entrybox.get()
-    textDisplay.insert(END, "\n" + send)
- 
-    userInput = entrybox.get().lower()
-    
-    if (userInput != ""):
-        if (userInput == "hello"):
-            textDisplay.insert(END, "\n" + "Chatty => Hi there, how can I help?")
-    else:
-        textDisplay.insert(END, "\n" + "Chatty => Sorry, I didn't understand. Could you write again?")
- 
+    userInput = entrybox.get()
+    textDisplay.insert(END, f"You => {userInput}\n")
     entrybox.delete(0, END)
+    
+    #request for Llama API wtih json format
+    # request_json = {
+    #     #"model": ---see which model to use
+    #     "messages": [
+    #         {"role": "user", "content": userInput}
+    #     ],
+    #     #if true, response returned in "real-time", else response returned in one block (complete response)
+    #     "stream":TRUE
+    # }
+    
+    # response_llama = llama.run(request_json)
+    # print(response_llama)
+    # #access the response first choice ---see how to get the best response
+    # #get the message dictionary and associated content field
+    # response_chatbot = response_llama.json()['choices'][0]['message']['content'].strip()
+    
+    #response from openai
+    openai.api_key = getenv("OPENAI_API_TOKEN")
+    response_openai = openai.Completion.create(
+        engine = "",
+        prompt = userInput,
+        max_tokens=1
+    )
+    response_chatbot = response_openai.choices[0].text.strip()
+    
+    tokens_used = response_openai['usage']['prompt_tokens']
+    textDisplay.insert(END, f"Chatty => {response_chatbot}\n Tokens used: {tokens_used}\n")
 
 #constants for graphics
 BG_COLOR = "#fff2cc"
