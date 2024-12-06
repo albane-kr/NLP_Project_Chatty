@@ -1,19 +1,22 @@
 #Project 1
 #Henrik Klasen & Albane Keraudren-Riguidel
 
+#tutorial: https://medium.com/@marketing_75744/how-to-use-llama-3-1-with-python-a-comprehensive-guide-5580cff378d5
+
 from tkinter import *
 from llamaapi import LlamaAPI
 import openai
 import json
 from os import getenv
 from dotenv import load_dotenv
+import emotionalFace
 
 load_dotenv()
 
 #initializing Llama API
 # llama_api_token = getenv("LLAMA_API_TOKEN")
 # llama = LlamaAPI(llama_api_token)
-
+num = 0
 
 def sendText():
     userInput = entrybox.get()
@@ -37,16 +40,12 @@ def sendText():
     # response_chatbot = response_llama.json()['choices'][0]['message']['content'].strip()
     
     #response from openai
-    openai.api_key = getenv("OPENAI_API_TOKEN")
-    response_openai = openai.Completion.create(
-        engine = "",
-        prompt = userInput,
-        max_tokens=1
-    )
-    response_chatbot = response_openai.choices[0].text.strip()
+    # openai.api_key = getenv("OPENAI_API_TOKEN")
+    response_gemini, video = emotionalFace.emotionalFace(userInput, num)
+    # response_chatbot = response_openai.choices[0].text.strip()
     
-    tokens_used = response_openai['usage']['prompt_tokens']
-    textDisplay.insert(END, f"Chatty => {response_chatbot}\n Tokens used: {tokens_used}\n")
+    # tokens_used = response_openai['usage']['prompt_tokens']
+    textDisplay.insert(END, f"Chatty => {response_gemini}\n Tokens used: {video}\n")
 
 #constants for graphics
 BG_COLOR = "#fff2cc"
