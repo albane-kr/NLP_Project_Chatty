@@ -5,8 +5,6 @@ import requests
 from parler_tts import ParlerTTSForConditionalGeneration 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import os
-from pydub import AudioSegment 
-from pydub.playback import play
 import numpy as np
 import scipy.io.wavfile as wavfile
 
@@ -32,8 +30,8 @@ def emotionalFace(prompt: str, num: int):
     """
     response = LLMAccess.generate_response(prompt)
     audio_file = synthesize_speech(text=response, num=num, emotion="happy")
-    video = create_animation(audio_file=audio_file)
-    return response, video 
+    video = create_animation(audio_file=audio_file, num=num, emotion='happy')
+    return response, audio_file
 
 # Define a function to synthesize speech with specific emotions
 def synthesize_speech(text, num, emotion):
@@ -49,21 +47,19 @@ def synthesize_speech(text, num, emotion):
     }
 
     style_description = emotion_styles.get(emotion.lower(), "A neutral and clear tone, with a standard delivery.")
-
     input_style = tokenizer(style_description, return_tensors="pt")
     input_text = tokenizer(text, return_tensors="pt")
-
+#
     input_ids = input_style.input_ids.to(device)
     prompt_input_ids = input_text.input_ids.to(device)
     attention_mask = input_style.attention_mask.to(device)
     prompt_attention_mask = input_text.attention_mask.to(device)
-
     # Generate speech
     generation = model.generate(input_ids=input_ids,
                                 prompt_input_ids=prompt_input_ids,
                                 attention_mask=attention_mask,
                                 prompt_attention_mask=prompt_attention_mask)
-
+#
     # Save the audio to a file
     # Convert to numpy array and ensure correct format 
     audio = generation.cpu().detach().numpy() 
@@ -75,14 +71,13 @@ def synthesize_speech(text, num, emotion):
     # Convert to 16-bit PCM format 
     audio = (audio * 32767).astype(np.int16)
     
-    wav_path = f"output_{num}_audio.wav" 
+    wav_path = f"audio_result/output_{num}_audio.wav" 
     wavfile.write(wav_path, model.config.sampling_rate, audio.T) 
     # Convert WAV to MP3 using pydub 
-    audio_segment = AudioSegment.from_wav(wav_path) 
-    play(audio_segment)
+    return wav_path
 
         
-def create_animation(text: str, num: int, emotion: str, audio_file: str):
+def create_animation(num: int, emotion: str, audio_file: str):
     """Generates synchronized MP4 file with emotional faces
 
     Args:
@@ -95,11 +90,8 @@ def create_animation(text: str, num: int, emotion: str, audio_file: str):
         _type_: File name or NoneType
     """
     # Set the input paths 
-    image_path = "input_image.jpeg" 
+    image_path = "input_image.gif" 
     audio_path = audio_file 
     output_path = f"output_{num}_video.mp4"
     os.system(f"C:/Users/henri/anaconda3/envs/nlp_project/python.exe inference.py --checkpoint_path checkpoints/wav2lip.pth --face {image_path} --audio {audio_path} --outfile {output_path}")
     return output_path
-
-synthesize_speech("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="angry")
-create_animation("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="angry", audio_file=f"output_{0}_audio.wav")

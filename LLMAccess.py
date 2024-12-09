@@ -22,6 +22,7 @@ import google.generativeai as genai
 genai.configure(api_key="AIzaSyD3LYSrWFEEKt6cMEmmqxzko37_--qnWow")
 model = genai.GenerativeModel("gemini-1.5-flash")
 def generate_response(prompt):
-    response = model.generate_content("Explain how AI works")
+    response = model.generate_content(prompt + " | request: keep the answer between 10 and 20 words!")
+    print(response)
     return response.text
     
