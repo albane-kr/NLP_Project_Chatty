@@ -5,7 +5,6 @@ import requests
 from parler_tts import ParlerTTSForConditionalGeneration 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import os
-import soundfile as sf
 from pydub import AudioSegment 
 from pydub.playback import play
 import numpy as np
@@ -99,8 +98,8 @@ def create_animation(text: str, num: int, emotion: str, audio_file: str):
     image_path = "input_image.jpeg" 
     audio_path = audio_file 
     output_path = f"output_{num}_video.mp4"
-    os.system(f"python inference.py --checkpoint_path checkpoints/wav2lip.pth --face {image_path} --audio {audio_path} --outfile {output_path}")
+    os.system(f"C:/Users/henri/anaconda3/envs/nlp_project/python.exe inference.py --checkpoint_path checkpoints/wav2lip.pth --face {image_path} --audio {audio_path} --outfile {output_path}")
     return output_path
 
-create_animation("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="happy", audio_file="output_audio.wav")
-# synthesize_speech("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="happy")
+synthesize_speech("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="angry")
+create_animation("Hello, I am your superior AI assistant, how may I serve you", 0, emotion="angry", audio_file=f"output_{0}_audio.wav")

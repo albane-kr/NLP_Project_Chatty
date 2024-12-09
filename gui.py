@@ -4,8 +4,6 @@
 #tutorial: https://medium.com/@marketing_75744/how-to-use-llama-3-1-with-python-a-comprehensive-guide-5580cff378d5
 
 from tkinter import *
-from llamaapi import LlamaAPI
-import openai
 import json
 from os import getenv
 from dotenv import load_dotenv

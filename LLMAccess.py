@@ -1,5 +1,3 @@
-import openai
-
 # # Set your OpenAI API key
 # openai.api_key = 'your-api-key'
 
