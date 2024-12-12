@@ -5,15 +5,13 @@
 
 from tkinter import *
 from tkinter import ttk
-from dotenv import load_dotenv
 import emotionalFace
 from pydub import AudioSegment 
 from pydub.playback import play
 import cv2
 from PIL import Image, ImageTk
 import os
-
-load_dotenv()
+from threading import Thread, Event
 
 def num():
     num = 0
@@ -28,10 +26,8 @@ def sendText():
     if userInput:
         textDisplay.insert(END, f"You => {userInput}\n")
         entrybox.delete(0, END)
-        response_gemini, wav_path, video_path = emotionalFace.emotionalFace(userInput, next(n))
-        #audio_segment = AudioSegment.from_wav(wav_path) 
+        response_gemini, wav_path, video_path = emotionalFace.emotionalFace(userInput, next(n)) 
         playVideo(video_path, wav_path)
-        #play(audio_segment)
         textDisplay.insert(END, f"Chatty => {response_gemini}\n Tokens used: {wav_path}\n")
         
 ###### For testing ######
@@ -41,7 +37,7 @@ def sendText():
 #         textDisplay.insert(END, f"You => {userInput}\n")
 #         entrybox.delete(0, END)
 #         textDisplay.insert(END, "\n" + "Chatty => Hi there, how can I help?\n")
-#         playVideo("C:/Users/.../NLP_Project/results/output_1.mp4", "C:/Users/.../NLP_Project/results/audio_result/output_1_audio.wav")
+#         playVideo("C:/Users/albane/Documents/BiCS/S5/NLP/project/NLP_Project/results/output_1.mp4", "C:/Users/albane/Documents/BiCS/S5/NLP/project/NLP_Project/results/output_0_audio.wav")
 
 def playVideo(videoPath, audioPath):
     global videoCapture, currentVideoPath
@@ -57,8 +53,9 @@ def playVideo(videoPath, audioPath):
         return
     print("Video opened successfully")
     
-    audioSegment = AudioSegment.from_file(audioPath) 
-    play(audioSegment)
+    audioEvent = Event()
+    audioThread = Thread(target=playAudio, args=(audioPath, audioEvent))
+    audioThread.start()
     
     def updateFrame():
         """reads frames from video file and converts them to TKinter format
@@ -73,8 +70,13 @@ def playVideo(videoPath, audioPath):
             videoLabel.after(10, updateFrame) #delay to be verified and adjusted
         else:
             videoCapture.release()
+            audioEvent.set()
             replayButton.configure(state=NORMAL)
     updateFrame() # loop for continuous display
+
+def playAudio(audioPath, audioEvent):
+    audioSegment = AudioSegment.from_file(audioPath)
+    play(audioSegment)
 
 def replayVideo():
     replayButton.configure(state=DISABLED)
