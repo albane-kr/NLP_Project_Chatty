@@ -31,7 +31,7 @@ def emotionalFace(prompt: str, num: int):
     response = LLMAccess.generate_response(prompt)
     audio_file = synthesize_speech(text=response, num=num, emotion="happy")
     video = create_animation(audio_file=audio_file, num=num, emotion='happy')
-    return response, audio_file
+    return response, audio_file, video
 
 # Define a function to synthesize speech with specific emotions
 def synthesize_speech(text, num, emotion):
@@ -83,7 +83,7 @@ def create_animation(num: int, emotion: str, audio_file: str):
     Args:
         text (str): User input prompt
         num (int): Running index of prompt
-        emotion (str): Emotional damage
+        emotion (str): Emotional tone
         audio_file (str): Path to WAV file
 
     Returns:
