@@ -21,8 +21,8 @@ import google.generativeai as genai
 
 genai.configure(api_key="AIzaSyD3LYSrWFEEKt6cMEmmqxzko37_--qnWow")
 model = genai.GenerativeModel("gemini-1.5-flash")
-def generate_response(prompt):
-    response = model.generate_content(prompt + " | request: keep the answer between 10 and 20 words!")
+def generate_response(prompt, emotion):
+    response = model.generate_content(prompt + f" | request: keep the answer between 10 and 20 words! | Take into account that user is in emotion {emotion}")
     print(response)
     return response.text
     

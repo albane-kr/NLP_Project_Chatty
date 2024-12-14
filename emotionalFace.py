@@ -1,21 +1,21 @@
 import LLMAccess
 import torch
-from styletts2 import tts as StyleTTS
-import requests
-from parler_tts import ParlerTTSForConditionalGeneration 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import os
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+from styletts2 import tts as StyleTTS
+from parler_tts import ParlerTTSForConditionalGeneration 
+from transformers import AutoTokenizer
 import numpy as np
 import scipy.io.wavfile as wavfile
+import emotion_text_detect.load_text_model as text_oracle
+
+# Get the current working directory
+current_directory = os.getcwd()
 
 # Load the pre-trained StyleTTS model
 device = "cuda:0" if torch.cuda.is_available() else "cpu" 
 model = ParlerTTSForConditionalGeneration.from_pretrained("parler-tts/parler-tts-mini-v1").to(device) 
 tokenizer = AutoTokenizer.from_pretrained("parler-tts/parler-tts-mini-v1")
-
-# DeepMotion API Keys
-api_url = "https://api.deepmotion.com/v1/animate"
-api_key = "your_api_key"
 
 def emotionalFace(prompt: str, num: int):
     """Calls the LLM module to generate a response, then generates the speech 
@@ -28,22 +28,21 @@ def emotionalFace(prompt: str, num: int):
     Returns:
         tuple: text and video
     """
-    response = LLMAccess.generate_response(prompt)
-    audio_file = synthesize_speech(text=response, num=num, emotion="happy")
-    video = create_animation(audio_file=audio_file, num=num, emotion='happy')
-    return response, audio_file
+    detect_emotion = text_oracle.predict_emotion(prompt, device)
+    response = LLMAccess.generate_response(prompt, detect_emotion)
+    audio_file = synthesize_speech(text=response, num=num, emotion=detect_emotion)
+    video = create_animation(audio_file=audio_file, num=num, emotion=detect_emotion)
+    return response, audio_file, video
 
 # Define a function to synthesize speech with specific emotions
 def synthesize_speech(text, num, emotion):
     emotion_styles = {
-        'happy': "A cheerful and upbeat tone, with a bright and lively delivery.",
-        'sad': "A slow and melancholic tone, with a soft and gentle delivery.",
-        'anxious': "A nervous and tense tone, with a fast and uneven delivery.",
-        'contempt': "A dismissive and scornful tone, with a haughty and arrogant delivery.",
-        'disgust': "A repulsed and annoyed tone, with a sharp and displeased delivery.",
-        'angry': "A loud and intense tone, with a forceful and aggressive delivery.",
-        'fear': "A trembling and cautious tone, with a hesitant and shaky delivery.",
-        'surprise': "A high-pitched and excited tone, with a sudden and emphatic delivery."
+        'Joy': "A cheerful and upbeat tone, with a bright and lively delivery.",
+        'Sad': "A slow and melancholic tone, with a soft and gentle delivery.",
+        'Anger': "A loud and intense tone, with a forceful and aggressive delivery.",
+        'Fear': "A trembling and cautious tone, with a hesitant and shaky delivery.",
+        'Love': "A warm and tender tone, with a gentle and affectionate delivery.",
+        'Surprise': "A high-pitched and excited tone, with a sudden and emphatic delivery."
     }
 
     style_description = emotion_styles.get(emotion.lower(), "A neutral and clear tone, with a standard delivery.")
