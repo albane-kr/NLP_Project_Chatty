@@ -26,8 +26,9 @@ def predict(file):
 
     with torch.no_grad():
         pred = model(log_mel_spec)
+        print(pred)
         probabilities = F.softmax(pred, dim=1)
-
+        print(probabilities)
         # Get the index of the highest probability
         predicted_class_idx = torch.argmax(probabilities, dim=1).item()
 

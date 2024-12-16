@@ -17,7 +17,7 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model = ParlerTTSForConditionalGeneration.from_pretrained("parler-tts/parler-tts-mini-v1").to(device) 
 tokenizer = AutoTokenizer.from_pretrained("parler-tts/parler-tts-mini-v1")
 
-def emotionalFace(prompt: str, num: int):
+def emotionalFace(prompt: str, num: int, audio_emotion=""):
     """Calls the LLM module to generate a response, then generates the speech 
     and then finally generate the talking face model
 
@@ -28,7 +28,10 @@ def emotionalFace(prompt: str, num: int):
     Returns:
         tuple: text and video
     """
-    detect_emotion = text_oracle.predict_emotion(prompt, device)
+    if audio_emotion != "":
+        detect_emotion = audio_emotion
+    else:
+        detect_emotion = text_oracle.predict_emotion(prompt, device)
     response = LLMAccess.generate_response(prompt, detect_emotion)
     audio_file = synthesize_speech(text=response, num=num, emotion=detect_emotion)
     video = create_animation(audio_file=audio_file, num=num, emotion=detect_emotion)

@@ -1,10 +1,9 @@
 import os
-os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import pyaudio
 import speech_recognition as sr
 import wave
 from emo_detect.EmotionRecognitionModel import EmotionRecognitionModel
-
 from emo_detect.load_model import predict
 
 def record_audio(duration: int, filename: str) -> str:
@@ -41,13 +40,17 @@ def record_audio(duration: int, filename: str) -> str:
 
     print("Recording finished.")
 
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
     # Save the recorded data as a WAV file
     with wave.open(filename, 'wb') as wf:
         wf.setnchannels(channels)
         wf.setsampwidth(p.get_sample_size(sample_format))
         wf.setframerate(rate)
         wf.writeframes(b''.join(frames))
-    return filename
+        text, emotion = transcribe_audio(filename)
+    return filename, text, emotion
 
 def transcribe_audio(filename: str) -> tuple:
     # Initialize recognizer
@@ -69,5 +72,3 @@ def transcribe_audio(filename: str) -> tuple:
     except sr.RequestError as e:
         print(f"Could not request results from Google Speech Recognition service; {e}")
         return "", ""
-
-# Example usage: Transcribe the audio from "output.wav"
