@@ -28,9 +28,9 @@ def sendText():
     if userInput:
         textDisplay.insert(END, f"You => {userInput}\n")
         entrybox.delete(0, END)
-        response_gemini, wav_path, video_path = emotionalFace.emotionalFace(userInput, next(n)) 
+        response_gemini, emotion,wav_path, video_path = emotionalFace.emotionalFace(userInput, next(n)) 
         playVideo(video_path)
-        textDisplay.insert(END, f"Chatty => {response_gemini}\n Tokens used: {wav_path}\n")
+        textDisplay.insert(END, f"Chatty => {emotion}\n{response_gemini}\n Tokens used: {wav_path}\n")
         
 ###### For testing ######
 # def sendText():
@@ -67,6 +67,7 @@ def playVideo(videoPath):
     audio_thread = Thread(target=playAudio, args=(videoClip,))
     audio_thread.start()
     updateFrame()  # Start the video loop
+    replayButton.configure(state=NORMAL)
 
 def playAudio(videoClip):
     videoClip.audio.preview()
