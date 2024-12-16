@@ -71,8 +71,3 @@ def transcribe_audio(filename: str) -> tuple:
         return "", ""
 
 # Example usage: Transcribe the audio from "output.wav"
-transcribe_audio(os.getcwd() + "/emo_detect/output.wav")
-
-
-# Example usage: Record a 5-second audio and save it as "output.wav"
-#record_audio(10, "output.wav")
