@@ -35,3 +35,5 @@ Models do not recognize non-word content, and throw an error.
 ## Disclaimer
 
 The Gemini API key will be deactivated after the project. Please insert your own API key in the LLMAccess.py module.
+
+Please also change the command in the emotionalFace.py file to your python environment (line 96)
