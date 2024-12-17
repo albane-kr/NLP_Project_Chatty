@@ -47,7 +47,7 @@ def predict_emotion(sentence, device):
         predicted_class_idx = torch.argmax(probabilities, dim=1).item()
 
         # Define your label mapping
-        label_mapping = {0: 'Sadness', 1: 'Joy', 2: 'Love', 3: 'Anger', 4: 'Fear', 5: 'Surprise'}
+        label_mapping = {0: 'Sad', 1: 'Happy', 2: 'Love', 3: 'Angry', 4: 'Fear', 5: 'Surprised'}
 
         # Map the predicted index to the corresponding label
         predicted_label = label_mapping[predicted_class_idx]

@@ -132,12 +132,8 @@ warnings.filterwarnings('ignore')
 from tkinter import *
 from tkinter import ttk
 import emotionalFace
-from pydub import AudioSegment 
-from pydub.playback import play
-import cv2
 from moviepy.editor import VideoFileClip
 from PIL import Image, ImageTk
-from tkvideo import tkvideo
 from threading import Thread
 import time
 from record_audio import record_audio
@@ -149,7 +145,7 @@ def num():
         num += 1
         yield num
 n = num()
-
+emotion_global = ""
 def sendText():
     global video_path, emotion_global
     userInput = entrybox.get()
@@ -164,7 +160,7 @@ def sendText():
 
         emotion_global=""
         playVideo(video_path)
-        textDisplay.insert(END, f"Chatty => {emotion}\n{response_gemini}\n Tokens used: {wav_path}\n")
+        textDisplay.insert(END, f"Chatty => You sound {emotion}\n{response_gemini}")
 
 def playVideo(videoPath):
     global videoLabel, videoClip, audio_thread
