@@ -1,27 +1,19 @@
-# # Set your OpenAI API key
-# openai.api_key = 'your-api-key'
-
-# def generate_response(prompt):
-    # response = openai.Completion.create(
-        # engine="gpt2",  # You can use other engines like "gpt-3.5-turbo"
-        # prompt=prompt,
-        # max_tokens=150,
-        # n=1,
-        # stop=None,
-        # temperature=0.7
-    # )
-    # return response.choices[0].text.strip()
-
-# # # Example usage
-# # user_input = "I'm feeling really down today. Can you help me?"
-# # response = generate_response(user_input)
-# # print("Chatbot:", response)
-
 import google.generativeai as genai
 
+# INSERT YOUR API KEY BELOW
 genai.configure(api_key="AIzaSyD3LYSrWFEEKt6cMEmmqxzko37_--qnWow")
 model = genai.GenerativeModel("gemini-1.5-flash")
-def generate_response(prompt, emotion):
+def generate_response(prompt: str, emotion: str) -> str:
+    """
+    @param prompt: str -> This parameter is the textual user input (or transscribed audio)
+    @param emotion: str -> This parameter is the emotion detected either in text or speech
+
+    @return: str -> The return value of this function is the textual response of the LLM for 
+    the user.
+
+    Description: This function takes the user input, adds the some part between the | and then returns the textual response. 
+    The length of this is limitted to 10-30 words, to not significantly impact performance by too long responses.
+    """
     response = model.generate_content(prompt + f" | request: keep the answer between 10 and 30 words! | Take into account that user is in emotion {emotion}")
     print(response)
     return response.text

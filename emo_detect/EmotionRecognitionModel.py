@@ -6,10 +6,12 @@ class EmotionRecognitionModel(nn.Module):
     def __init__(self, num_classes):
         super(EmotionRecognitionModel, self).__init__()
         # CNN layers
+        # Convolution for feature extraction and normalization for faster convergence
         self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.bn2 = nn.BatchNorm2d(64)
+        # Reduce dimensions
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
         # BiLSTM for temporal modeling

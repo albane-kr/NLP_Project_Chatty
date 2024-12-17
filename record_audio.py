@@ -3,10 +3,11 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import pyaudio
 import speech_recognition as sr
 import wave
-from emo_detect.EmotionRecognitionModel import EmotionRecognitionModel
+#from emo_detect.EmotionRecognitionModel import EmotionRecognitionModel
 from emo_detect.load_model import predict
 
-def record_audio(duration: int, filename: str) -> str:
+def record_audio(duration: int, filename: str) -> tuple:
+    """Records audio of duration 'duration' and saves it in file 'filename'. Returns a (filename, text, emotion)"""
     # Set up parameters for recording
     chunk = 1024  # Record in chunks of 1024 samples
     sample_format = pyaudio.paInt16  # 16 bits per sample
@@ -53,6 +54,7 @@ def record_audio(duration: int, filename: str) -> str:
     return filename, text, emotion
 
 def transcribe_audio(filename: str) -> tuple:
+    """Transscribes the audio, and makes emotion prediction, returns (text, emotion)"""
     # Initialize recognizer
     recognizer = sr.Recognizer()
 

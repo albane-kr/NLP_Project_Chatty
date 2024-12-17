@@ -3,16 +3,18 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 from gensim.models import Word2Vec
 import torch
 import numpy as np
-import torch.nn as nn
 from emotion_text_detect.SimpleNN import SimpleNN
 import torch.nn.functional as F
 working_directory = os.getcwd()
 torch.serialization.add_safe_globals({'SimpleNN': SimpleNN})
 
+
+# Load pretrained Word2Vec model for input transformation
 word2vec_model = Word2Vec.load(working_directory+'/emotion_text_detect/word2vec.model')
 
 
 def load_checkpoint(filepath):
+    """Loads a pretrained model from a given checkpoint"""
     checkpoint = torch.load(filepath)
     model = SimpleNN(100, 128, 3, 6)
     model.load_state_dict(checkpoint['state_dict'])
@@ -27,6 +29,9 @@ def load_checkpoint(filepath):
 model, optimizer, start_epoch, best_loss = load_checkpoint(working_directory+'/emotion_text_detect/best_model.pth.tar')
 
 def sentence_to_vector(sentence, model):
+    """
+    Vectorizes inputs using the word2vec model.
+    """
     words = sentence.split()
     word_vectors = [model.wv[word] for word in words if word in model.wv]
     if len(word_vectors) == 0:
@@ -34,6 +39,9 @@ def sentence_to_vector(sentence, model):
     return np.mean(word_vectors, axis=0)
 
 def predict_emotion(sentence, device):
+    """
+    Predicts the emotion of the text
+    """
     vec = sentence_to_vector(sentence=sentence, model=word2vec_model)
     model.to(device)
     model.eval()

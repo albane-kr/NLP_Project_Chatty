@@ -41,6 +41,7 @@ def predict(file):
     return predicted_label
 
 def extract_log_mel_spectrogram(audio_path, n_mels=128, duration=3, sr=22050):
+    """Extracts the spectrogram of a given .wav file"""
     signal, sr = librosa.load(audio_path, sr=sr, duration=duration)
     mel_spec = librosa.feature.melspectrogram(y=signal, sr=sr, n_mels=n_mels, fmax=8000)
     log_mel_spec = librosa.power_to_db(mel_spec, ref=np.max)
