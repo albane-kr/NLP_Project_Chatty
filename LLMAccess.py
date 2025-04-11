@@ -1,7 +1,7 @@
 import google.generativeai as genai
 
 # INSERT YOUR API KEY BELOW
-genai.configure(api_key="AIzaSyD3LYSrWFEEKt6cMEmmqxzko37_--qnWow")
+genai.configure(api_key="")
 model = genai.GenerativeModel("gemini-1.5-flash")
 def generate_response(prompt: str, emotion: str) -> str:
     """
